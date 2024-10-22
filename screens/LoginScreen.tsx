@@ -18,15 +18,10 @@ import UserPhoto from "../components/UserAvatar";
 import { AntDesign } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function RegistrationScreen() {
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
-  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  const handleLoginChange = (value: string) => {
-    setLogin(value);
-  };
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -37,16 +32,8 @@ export default function RegistrationScreen() {
   };
 
   const onRegisterPress = () => {
-    console.log(
-      "Логін:",
-      login,
-      "Електронна адреса:",
-      email,
-      "Пароль:",
-      password
-    );
+    console.log("Електронна адреса:", email, "Пароль:", password);
     setEmail("");
-    setLogin("");
     setPassword("");
   };
 
@@ -56,40 +43,22 @@ export default function RegistrationScreen() {
   };
   const onButtonEnterPress = () => {};
 
-  const imageBackground = require("../assets/images/background.png");
-  const imageAvatar = require("../assets/images/profile-photo.jpg");
+  const imageSource = require("../assets/images/background.png");
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-        <Background imageSource={imageBackground}></Background>
+        <Background imageSource={imageSource}></Background>
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View style={styles.formContainer}>
             <View style={styles.userPhotoTitleWrapper}>
-              <UserPhoto
-                imageSource={imageAvatar}
-                showAddButton={true}
-                outerStyles={styles.userPhoto}
-              >
-                <Button
-                  outerStyles={styles.buttonClose}
-                  onPress={onAddButtonPress}
-                >
-                  <AntDesign name="close" size={13} color={colors.icon_main} />
-                </Button>
-              </UserPhoto>
-              <MainTitle text="Реєстрація"></MainTitle>
+              <MainTitle text="Увійти"></MainTitle>
             </View>
+
             <View style={styles.inputContainer}>
-              <Input
-                value={login}
-                autofocus={true}
-                placeholder="Логін"
-                onTextChange={handleLoginChange}
-              ></Input>
               <Input
                 value={email}
                 placeholder="Адреса електронної пошти"
@@ -120,7 +89,7 @@ export default function RegistrationScreen() {
               <View style={styles.textButtonWrapper}>
                 <Text style={styles.enterAskText}>Вже є акаунт?</Text>
                 <Button onPress={onButtonEnterPress}>
-                  <Text style={styles.buttonEnterText}>Увійти</Text>
+                  <Text style={styles.buttonEnterText}>Зареєструватися</Text>
                 </Button>
               </View>
             </View>
@@ -138,7 +107,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "100%",
-    height: "67%",
+    height: "60%",
     backgroundColor: colors.bg_main_light,
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
@@ -174,14 +143,13 @@ const styles = StyleSheet.create({
     position: "relative",
     marginTop: verticalScale(-90),
   },
-  buttonClose: {
+  buttonAdd: {
     position: "absolute",
     width: scale(25),
     height: scale(25),
     right: verticalScale(-12),
     bottom: scale(14),
-    backgroundColor: colors.bg_main_light,
-    borderColor: colors.icon_main,
+    borderColor: colors.icon_accent,
     borderWidth: 1,
   },
   buttonClearText: {
