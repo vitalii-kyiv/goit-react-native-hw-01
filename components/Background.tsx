@@ -28,13 +28,11 @@ const Background: FC<BackgroundProps> = ({
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1,
     position: "absolute",
     top: 0,
     bottom: 0,
-    maxHeight: verticalScale(812),
+    height: verticalScale(812),
     width: scale(375),
-    zIndex: -1,
   },
 });
 

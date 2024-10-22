@@ -10,7 +10,10 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Button onPress={() => navigation.navigate("Registration")}>
-        <Text style={styles.buttonText}>Зареєструватися</Text>
+        <Text style={styles.buttonText}>Rigistratioon</Text>
+      </Button>
+      <Button onPress={() => navigation.navigate("Login")}>
+        <Text style={styles.buttonText}>Login</Text>
       </Button>
     </View>
   );
