@@ -18,7 +18,7 @@ type UserPhotoProps = {
   children?: React.ReactNode;
 };
 
-const UserPhoto: FC<UserPhotoProps> = ({
+const Photo: FC<UserPhotoProps> = ({
   imageSource,
   onPress,
   children,
@@ -34,7 +34,7 @@ const UserPhoto: FC<UserPhotoProps> = ({
   );
 };
 
-export default UserPhoto;
+export default Photo;
 
 const styles = StyleSheet.create({
   container: {

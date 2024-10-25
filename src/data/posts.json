@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "title": "Ліс",
+    "location": "Ivano-Frankivsk's Region",
+    "country": "Ukraine",
+    "image": "../assets/images/forest.jpg"
+  },
+  {
+    "id": "2",
+    "title": "Захід на Чорному морі",
+    "location": "Odessa",
+    "country": "Ukraine",
+    "image": "../assets/images/sunset.jpg"
+  },
+  {
+    "id": "3",
+    "title": "Старий будиночок у Венеції",
+    "location": "Venice",
+    "country": "Italy",
+    "image": "../assets/images/house.jpg"
+  }
+]

@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import Navigation from "./navigation/navigation";
+import Navigation from "./navigation/StackNavigation";
 import { ActivityIndicator } from "react-native";
 
 export default function App() {
