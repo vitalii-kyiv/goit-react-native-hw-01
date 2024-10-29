@@ -14,9 +14,11 @@ import Button from "../components/Button";
 import { colors } from "../styles/colors";
 import { scale, verticalScale } from "../utils/scaling";
 import Background from "../components/Background";
-import UserPhoto from "../components/UserAvatar";
+import UserPhoto from "../components/Photo";
 import { AntDesign } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Navigation from "../navigation/StackNavigation";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RegistrationScreen() {
   const [email, setEmail] = useState("");
@@ -54,10 +56,11 @@ export default function RegistrationScreen() {
   const onShowButtonPress = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
-  const onButtonEnterPress = () => {};
 
   const imageBackground = require("../assets/images/background.png");
   const imageAvatar = require("../assets/images/profile-photo.jpg");
+
+  const navigation = useNavigation();
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -119,7 +122,7 @@ export default function RegistrationScreen() {
               </Button>
               <View style={styles.textButtonWrapper}>
                 <Text style={styles.enterAskText}>Вже є акаунт?</Text>
-                <Button onPress={onButtonEnterPress}>
+                <Button onPress={() => navigation.navigate("Login")}>
                   <Text style={styles.buttonEnterText}>Увійти</Text>
                 </Button>
               </View>

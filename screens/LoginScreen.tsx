@@ -7,21 +7,23 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import MainTitle from "../components/MainTitle";
-import Input from "../components/Input";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+
+import Input from "../components/Input";
+import MainTitle from "../components/MainTitle";
 import Button from "../components/Button";
 import { colors } from "../styles/colors";
 import { scale, verticalScale } from "../utils/scaling";
 import Background from "../components/Background";
-import UserPhoto from "../components/UserAvatar";
-import { AntDesign } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const backGroundImage = require("../assets/images/background.png");
+  const navigation = useNavigation();
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -32,23 +34,20 @@ export default function LoginScreen() {
   };
 
   const onRegisterPress = () => {
+    navigation.navigate("Main");
     console.log("Електронна адреса:", email, "Пароль:", password);
     setEmail("");
     setPassword("");
   };
 
-  const onAddButtonPress = () => {};
   const onShowButtonPress = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
-  const onButtonEnterPress = () => {};
-
-  const imageSource = require("../assets/images/background.png");
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-        <Background imageSource={imageSource}></Background>
+        <Background imageSource={backGroundImage}></Background>
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -84,11 +83,11 @@ export default function LoginScreen() {
                 outerStyles={styles.buttonRegister}
                 onPress={onRegisterPress}
               >
-                <Text style={styles.buttonText}>Зареєструватися</Text>
+                <Text style={styles.buttonText}>Увійти</Text>
               </Button>
               <View style={styles.textButtonWrapper}>
                 <Text style={styles.enterAskText}>Вже є акаунт?</Text>
-                <Button onPress={onButtonEnterPress}>
+                <Button onPress={() => navigation.navigate("Registration")}>
                   <Text style={styles.buttonEnterText}>Зареєструватися</Text>
                 </Button>
               </View>
