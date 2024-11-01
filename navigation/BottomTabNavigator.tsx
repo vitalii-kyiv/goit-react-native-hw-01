@@ -12,6 +12,7 @@ import { colors } from "../styles/colors";
 import ProfileIcon from "../assets/images/icons/ProfileIcon";
 import PostsIcon from "../assets/images/icons/PostsIcon";
 import LogOutIcon from "../assets/images/icons/LogOutIcon";
+import ArrowBackIcon from "../assets/images/icons/ArrowBackIcon";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,7 @@ const BottomTabNavigator = () => {
         options={{
           headerTitle: "Публікації",
           headerTitleAlign: "center",
+          headerTitleStyle: styles.homeHeaderTitleStile,
           headerRight: () => (
             <LogOutIcon
               style={{ marginRight: scale(10) }}
@@ -50,13 +52,33 @@ const BottomTabNavigator = () => {
             shadowRadius: 0,
             elevation: 2,
           },
-          headerTitleStyle: styles.homeHeaderTitleStile,
         }}
       />
       <Tab.Screen
         name="CreateScreen"
         component={CreatePostsScreen}
         options={{
+          headerTitle: "Створити публікацію",
+          headerTitleAlign: "center",
+          headerTitleStyle: styles.homeHeaderTitleStile,
+          headerStyle: {
+            height: verticalScale(88),
+            shadowColor: "rgba(0, 0, 0, 0.3)",
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 0,
+            elevation: 2,
+          },
+          tabBarStyle: { display: "none" },
+          headerLeft: () => (
+            <ArrowBackIcon
+              style={{ marginLeft: scale(16) }}
+              onPress={() => navigation.navigate("Home")}
+            />
+          ),
           tabBarIcon: ({ focused }) => (
             <Ionicons name="add" size={14} color={colors.text_main_light} />
           ),

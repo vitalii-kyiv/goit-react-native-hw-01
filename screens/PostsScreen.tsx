@@ -30,18 +30,24 @@ export default function PostsScreen() {
     id: string;
     title: string;
     location: string;
+    country: string;
     image: ImageSourcePropType;
+    latitude: number;
+    longitude: number;
   };
 
   const renderItem = ({ item }: { item: Post }) => (
     <PostItem
       title={item.title}
       location={item.location}
-      imageSource={item.image}
       country={item.country}
+      imageSource={item.image}
       isLikesVisible={false}
+      latitude={item.latitude}
+      longitude={item.longitude}
     />
   );
+
   return (
     <View style={styles.container}>
       <View style={styles.photoNameWrapper}>

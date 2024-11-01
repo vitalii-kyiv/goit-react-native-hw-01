@@ -1,7 +1,7 @@
 export const colors = {
   bg_main_light: "#FFFFFF",
   text_main_dark: "#212121",
-  text_main_dark_80: "33, 33, 33, 0.8",
+  text_main_dark_80: "rgba(33, 33, 33, 0.8)",
   text_main_light: "#FFFFFF",
   text_placeholder: "#BDBDBD",
   text_link: "#1B4371",
@@ -10,4 +10,5 @@ export const colors = {
   input_bg_main: "#F6F6F6",
   icon_main: "#BDBDBD",
   icon_accent: "#FF6C00",
+  comment_bg: "rgba(0, 0, 0, 0.03)",
 };
