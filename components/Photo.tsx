@@ -12,6 +12,7 @@ import { colors } from "../styles/colors";
 
 type UserPhotoProps = {
   outerStyles?: ViewProps["style"];
+  outerStylesPhoto?: ViewProps["style"];
   imageSource?: any;
   onPress?: () => void;
   showAddButton?: boolean;
@@ -23,11 +24,16 @@ const Photo: FC<UserPhotoProps> = ({
   onPress,
   children,
   outerStyles,
+  outerStylesPhoto,
 }) => {
   return (
     <View style={[styles.container, outerStyles]}>
       {imageSource ? (
-        <Image source={imageSource} style={styles.photo} resizeMode="cover" />
+        <Image
+          source={imageSource}
+          style={[styles.photo, outerStylesPhoto]}
+          resizeMode="cover"
+        />
       ) : null}
       {children}
     </View>
@@ -38,8 +44,6 @@ export default Photo;
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: scale(16),
-
     backgroundColor: colors.input_bg_main,
     alignItems: "center",
     justifyContent: "center",

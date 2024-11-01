@@ -1,17 +1,12 @@
 import React, { FC } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ImageSourcePropType,
-} from "react-native";
+import { View, Text, ImageSourcePropType, StyleSheet } from "react-native";
 import UserPhoto from "./Photo";
 import { scale, verticalScale } from "../utils/scaling";
 import CommentIcon from "../assets/images/icons/CommentIcon";
 import LocationIcon from "../assets/images/icons/LocationIcon";
 import LikeIcon from "../assets/images/icons/LikeIcon";
 import { colors } from "../styles/colors";
+import { useNavigation } from "@react-navigation/native";
 
 type PostItemProps = {
   title: string;
@@ -19,6 +14,8 @@ type PostItemProps = {
   country?: string;
   imageSource: ImageSourcePropType;
   isLikesVisible?: boolean;
+  latitude?: number;
+  longitude?: number;
 };
 
 const PostItem: FC<PostItemProps> = ({
@@ -27,7 +24,19 @@ const PostItem: FC<PostItemProps> = ({
   country,
   imageSource,
   isLikesVisible = true,
+  latitude,
+  longitude,
 }) => {
+  const navigation = useNavigation();
+
+  const handleLocationPress = () => {
+    if (latitude && longitude) {
+      navigation.navigate("MapScreen", { latitude, longitude });
+    } else {
+      console.log("Координати не знайдено");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <UserPhoto imageSource={imageSource} outerStyles={styles.image} />
@@ -36,20 +45,24 @@ const PostItem: FC<PostItemProps> = ({
       <View style={styles.commentLocationWrapper}>
         <View style={styles.commentLikeWrapper}>
           <View style={styles.commentWrapper}>
-            <CommentIcon></CommentIcon>
+            <CommentIcon
+              onPress={() => navigation.navigate("Comment", { imageSource })}
+            />
             <Text style={styles.comment}>0</Text>
           </View>
           {isLikesVisible && (
             <View style={styles.likeWrapper}>
-              <LikeIcon></LikeIcon>
+              <LikeIcon />
               <Text style={styles.like}>0</Text>
             </View>
           )}
         </View>
 
         <View style={styles.locationWrapper}>
-          <LocationIcon></LocationIcon>
-          <Text style={styles.location}>{`${location}, ${country}`}</Text>
+          <LocationIcon onPress={handleLocationPress} />
+          <Text style={styles.location}>{`${location || ""}, ${
+            country || ""
+          }`}</Text>
         </View>
       </View>
     </View>
