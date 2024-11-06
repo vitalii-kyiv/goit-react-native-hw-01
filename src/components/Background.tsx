@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { ImageBackground, StyleSheet, ViewProps } from "react-native";
-import { scale, verticalScale } from "../utils/scaling";
+import { scale, verticalScale } from "../../utils/scaling";
 import { Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 

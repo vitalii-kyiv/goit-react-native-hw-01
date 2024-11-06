@@ -4,7 +4,7 @@
     "title": "Ліс",
     "location": "Ivano-Frankivsk's Region",
     "country": "Ukraine",
-    "image": "../assets/images/forest.jpg",
+    "image": "../../assets/images/forest.jpg",
     "latitude": 48.9226,
     "longitude": 24.7111
   },
@@ -13,7 +13,7 @@
     "title": "Захід на Чорному морі",
     "location": "Odessa",
     "country": "Ukraine",
-    "image": "../assets/images/sunset.jpg",
+    "image": "../../assets/images/sunset.jpg",
     "latitude": 46.4825,
     "longitude": 30.7233
   },
@@ -22,7 +22,7 @@
     "title": "Старий будиночок у Венеції",
     "location": "Venice",
     "country": "Italy",
-    "image": "../assets/images/house.jpg",
+    "image": "../../assets/images/house.jpg",
     "latitude": 45.4408,
     "longitude": 12.3155
   }

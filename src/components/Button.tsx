@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { StyleSheet, TouchableOpacity, ViewProps } from "react-native";
 
-import { colors } from "../styles/colors";
-import { scale, verticalScale } from "../utils/scaling";
+import { colors } from "../../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
 
 type ButtonProps = {
   children: React.ReactNode;

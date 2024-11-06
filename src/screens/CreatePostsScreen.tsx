@@ -1,4 +1,6 @@
+import React, { useState } from "react";
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -7,120 +9,130 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Alert,
 } from "react-native";
-import { scale, verticalScale } from "../utils/scaling";
-import { colors } from "../styles/colors";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import * as Location from "expo-location";
+import { scale, verticalScale } from "../../utils/scaling";
+import { colors } from "../../styles/colors";
 import Photo from "../components/Photo";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { useState } from "react";
-import CameraIcon from "../assets/images/icons/CameraIcon";
-import BasketIcon from "../assets/images/icons/BasketIcon";
 import CameraUse from "../components/CameraUse";
-import { useNavigation } from "@react-navigation/native";
-import * as Location from "expo-location";
+import BasketIcon from "../../assets/images/icons/BasketIcon";
+import { addNewPost } from "../../store/slices/postsSlice"; 
 
 export default function CreatePostsScreen() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [geoLocation, setGeoLocation] = useState(null);
-  console.log("geoLocation", geoLocation);
 
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const userPhoto = photo ? { uri: photo.uri } : null;
+  const postStatus = useSelector((state) => state.posts.status);
 
-  const handleNameChange = (value: string) => {
-    setName(value);
+  const handleNameChange = (value: string) => setName(value);
+  const handleLocationChange = (value: string) => setLocation(value);
+
+  const handlePhotoTaken = (newPhoto) => {
+    setPhoto(newPhoto);
+    console.log("Photo captured:", newPhoto);
   };
 
-  const handleLocationChange = (value: string) => {
-    setLocation(value);
+  const handleClearForm = () => {
+    setName("");
+    setLocation("");
+    setPhoto(null);
+    setGeoLocation(null);
+  };
+
+  const fetchGeoLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Error", "Permission to access location was denied");
+      return null;
+    }
+    const location = await Location.getCurrentPositionAsync({});
+    setGeoLocation(location.coords);
+    return location.coords;
   };
 
   const onButtonPostPress = async () => {
     if (name && location && photo) {
       const coords = await fetchGeoLocation();
       if (coords) {
-        Alert.alert(
-          "Пост створено",
-          `Координати: ${coords.latitude}, ${coords.longitude}`
-        );
-        navigation.navigate("Home");
-        handleClearForm();
+        const newPost = {
+          content: name,
+          location,
+          photo: photo.uri,
+          comments: [],
+          geoLocation: {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          },
+        };
+
+        dispatch(addNewPost(newPost))
+          .unwrap()
+          .then(() => {
+            Alert.alert(
+              "Post Created",
+              "Your post has been successfully created!"
+            );
+            navigation.navigate("Home");
+            handleClearForm();
+          })
+          .catch((error) => {
+            Alert.alert("Error", "Failed to create post: " + error.message);
+          });
       }
     } else {
-      Alert.alert("Помилка", "Будь ласка, заповніть всі поля та додайте фото.");
+      Alert.alert("Error", "Please fill all fields and upload a photo.");
     }
-  };
-
-  const fetchGeoLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Помилка", "Доступ до геолокації відхилено");
-      return null;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setGeoLocation(location.coords);
-    return location.coords;
-  };
-
-  const handlePhotoTaken = (photo) => {
-    setPhoto(photo);
-    console.log("Знімок зроблено:", photo);
-  };
-
-  const handleClearForm = () => {
-    setName("");
-    setLocation("");
-    setPhoto("");
-    setGeoLocation(null);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardAvoidingView}
         >
           <View style={styles.formContainer}>
-            <Photo imageSource={userPhoto} outerStyles={styles.userUploadPhoto}>
-              <CameraUse onPhotoTaken={handlePhotoTaken}></CameraUse>
-            </Photo>
-            <TouchableOpacity
-              onPress={() => {
-                if (photo) {
-                  setPhoto("");
-                }
-              }}
+            <Photo
+              imageSource={photo ? { uri: photo.uri } : null}
+              outerStyles={styles.userUploadPhoto}
             >
+              <CameraUse onPhotoTaken={handlePhotoTaken} />
+            </Photo>
+            <TouchableOpacity onPress={() => setPhoto(null)}>
               <Text style={styles.userUploadPhotoText}>
-                {photo ? "Редагувати фото" : "Завантажте фото"}
+                {photo ? "Edit Photo" : "Upload Photo"}
               </Text>
             </TouchableOpacity>
 
             <Input
               value={name}
-              placeholder="Назва..."
+              placeholder="Title..."
               onTextChange={handleNameChange}
               outerStyles={styles.inputName}
             />
             <Input
               value={location}
-              placeholder="Місцевість..."
+              placeholder="Location..."
               onTextChange={handleLocationChange}
               outerStyles={styles.inputLocation}
             />
             <Button onPress={onButtonPostPress} outerStyles={styles.buttonPost}>
-              <Text style={styles.buttonPostText}>Опубліковати</Text>
+              <Text style={styles.buttonPostText}>
+                {postStatus === "loading" ? "Posting..." : "Publish"}
+              </Text>
             </Button>
           </View>
         </KeyboardAvoidingView>
         <Button onPress={handleClearForm}>
-          <BasketIcon style={styles.basketIcon}></BasketIcon>
+          <BasketIcon style={styles.basketIcon} />
         </Button>
       </View>
     </TouchableWithoutFeedback>
@@ -156,15 +168,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border_gray,
     marginBottom: verticalScale(8),
-  },
-  cameraIconContainer: {
-    width: 60,
-    height: 60,
-    backgroundColor: colors.bg_main_light,
-    borderRadius: 100,
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
   },
   userUploadPhotoText: {
     fontWeight: "400",
@@ -213,7 +216,6 @@ const styles = StyleSheet.create({
   basketIcon: {
     position: "absolute",
     bottom: 32,
-    justifyContent: "flex-end",
     alignSelf: "center",
   },
 });
