@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import Photo from "./Photo";
-import DefaultProfileIcon from "../assets/images/icons/DefaultProfileIcon";
-import { scale, verticalScale } from "../utils/scaling";
-import { colors } from "../styles/colors";
+import DefaultProfileIcon from "../../assets/images/icons/DefaultProfileIcon";
+import { scale, verticalScale } from "../../utils/scaling";
+import { colors } from "../../styles/colors";
 
 const CommentItem = ({ imageSource, text, date }) => {
   return (

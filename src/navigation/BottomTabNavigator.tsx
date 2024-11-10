@@ -1,23 +1,37 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useDispatch } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-
+import { signOut } from "firebase/auth";
+import { auth } from "../../config";
+import { logout } from "../../store/slices/userSlice";
 import PostsScreen from "../screens/PostsScreen";
 import CreatePostsScreen from "../screens/CreatePostsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import { scale, verticalScale } from "../utils/scaling";
-import { colors } from "../styles/colors";
-import ProfileIcon from "../assets/images/icons/ProfileIcon";
-import PostsIcon from "../assets/images/icons/PostsIcon";
-import LogOutIcon from "../assets/images/icons/LogOutIcon";
-import ArrowBackIcon from "../assets/images/icons/ArrowBackIcon";
+import { scale, verticalScale } from "../../utils/scaling";
+import { colors } from "../../styles/colors";
+import ProfileIcon from "../../assets/images/icons/ProfileIcon";
+import PostsIcon from "../../assets/images/icons/PostsIcon";
+import LogOutIcon from "../../assets/images/icons/LogOutIcon";
+import ArrowBackIcon from "../../assets/images/icons/ArrowBackIcon";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      dispatch(logout());
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Помилка виходу:", error.message);
+    }
+  };
 
   return (
     <Tab.Navigator
@@ -37,7 +51,7 @@ const BottomTabNavigator = () => {
           headerRight: () => (
             <LogOutIcon
               style={{ marginRight: scale(10) }}
-              onPress={() => navigation.navigate("Login")}
+              onPress={handleLogout}
             />
           ),
           tabBarIcon: ({ focused }) => <PostsIcon />,

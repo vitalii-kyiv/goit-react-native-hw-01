@@ -1,14 +1,15 @@
 import React, { FC } from "react";
 import { View, Text, ImageSourcePropType, StyleSheet } from "react-native";
 import UserPhoto from "./Photo";
-import { scale, verticalScale } from "../utils/scaling";
-import CommentIcon from "../assets/images/icons/CommentIcon";
-import LocationIcon from "../assets/images/icons/LocationIcon";
-import LikeIcon from "../assets/images/icons/LikeIcon";
-import { colors } from "../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
+import CommentIcon from "../../assets/images/icons/CommentIcon";
+import LocationIcon from "../../assets/images/icons/LocationIcon";
+import LikeIcon from "../../assets/images/icons/LikeIcon";
+import { colors } from "../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
 
 type PostItemProps = {
+  postId: string; // Додано postId як пропс
   title: string;
   location?: string;
   country?: string;
@@ -19,6 +20,7 @@ type PostItemProps = {
 };
 
 const PostItem: FC<PostItemProps> = ({
+  postId,
   title,
   location,
   country,
@@ -37,6 +39,10 @@ const PostItem: FC<PostItemProps> = ({
     }
   };
 
+  const handleCommentPress = () => {
+    navigation.navigate("Comment", { postId, imageSource });
+  };
+
   return (
     <View style={styles.container}>
       <UserPhoto imageSource={imageSource} outerStyles={styles.image} />
@@ -45,9 +51,7 @@ const PostItem: FC<PostItemProps> = ({
       <View style={styles.commentLocationWrapper}>
         <View style={styles.commentLikeWrapper}>
           <View style={styles.commentWrapper}>
-            <CommentIcon
-              onPress={() => navigation.navigate("Comment", { imageSource })}
-            />
+            <CommentIcon onPress={handleCommentPress} />
             <Text style={styles.comment}>0</Text>
           </View>
           {isLikesVisible && (

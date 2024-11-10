@@ -1,47 +1,30 @@
-import {
-  FlatList,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import UserPhoto from "../components/Photo";
-import { scale, verticalScale } from "../utils/scaling";
-import { colors } from "../styles/colors";
-import postsData from "../src/data/posts.json";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPosts, selectPosts } from "../../store/slices/postsSlice";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import PostItem from "../components/PostItem";
-
-const userPhoto = require("../assets/images/profile-photo-small.jpg");
-
-const imageMap: { [key: string]: any } = {
-  "../assets/images/forest.jpg": require("../assets/images/forest.jpg"),
-  "../assets/images/sunset.jpg": require("../assets/images/sunset.jpg"),
-  "../assets/images/house.jpg": require("../assets/images/house.jpg"),
-};
+import { scale, verticalScale } from "../../utils/scaling";
+import { colors } from "../../styles/colors";
+import { selectAllPosts } from "../../store/selectors/postsSelector";
+import { selectCurrentUser } from "../../store/slices/userSlice";
+import DefaultProfileIcon from "../../assets/images/icons/DefaultProfileIcon";
 
 export default function PostsScreen() {
-  const posts = postsData.map((post) => ({
-    ...post,
-    image: imageMap[post.image],
-  }));
-  console.log("posts", posts);
+  const dispatch = useDispatch();
+  const posts = useSelector(selectAllPosts);
+  const currentUser = useSelector(selectCurrentUser);
 
-  type Post = {
-    id: string;
-    title: string;
-    location: string;
-    country: string;
-    image: ImageSourcePropType;
-    latitude: number;
-    longitude: number;
-  };
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
-  const renderItem = ({ item }: { item: Post }) => (
+  const renderItem = ({ item }) => (
     <PostItem
       title={item.title}
+      postId={item.id}
       location={item.location}
       country={item.country}
-      imageSource={item.image}
+      imageSource={{ uri: item.image }}
       isLikesVisible={false}
       latitude={item.latitude}
       longitude={item.longitude}
@@ -51,10 +34,10 @@ export default function PostsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.photoNameWrapper}>
-        <UserPhoto outerStyles={styles.userPhoto} imageSource={userPhoto} />
+        <DefaultProfileIcon outerStyles={styles.userPhoto} />
         <View style={styles.textWrapper}>
-          <Text>Natali Romanova</Text>
-          <Text>email@example.com</Text>
+          <Text>{currentUser.displayName}</Text>
+          <Text>{currentUser.email}</Text>
         </View>
       </View>
       <FlatList

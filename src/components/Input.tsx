@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, ViewProps } from "react-native";
-import { colors } from "../styles/colors";
-import { scale, verticalScale } from "../utils/scaling";
+import { colors } from "../../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
 import { FC, useState } from "react";
 
 type InputProps = {

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -6,69 +7,85 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from "react-native";
-import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-
+import { useDispatch } from "react-redux";
+import { auth } from "../../config";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { login } from "../../store/slices/userSlice";
 import Input from "../components/Input";
 import MainTitle from "../components/MainTitle";
 import Button from "../components/Button";
-import { colors } from "../styles/colors";
-import { scale, verticalScale } from "../utils/scaling";
 import Background from "../components/Background";
+import { colors } from "../../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const backGroundImage = require("../assets/images/background.png");
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-  };
+  const onLoginPress = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-  };
+      dispatch(
+        login({
+          uid: user.uid,
+          displayName: user.displayName || "Користувач",
+          email: user.email,
+        })
+      );
 
-  const onRegisterPress = () => {
-    navigation.navigate("Main");
-    console.log("Електронна адреса:", email, "Пароль:", password);
-    setEmail("");
-    setPassword("");
+      navigation.navigate("Main");
+
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error("Помилка входу:", error.message);
+      Alert.alert("Помилка входу", error.message);
+    }
   };
 
   const onShowButtonPress = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
+  const imageBackground = require("../../assets/images/background.png");
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <>
-        <Background imageSource={backGroundImage}></Background>
+      <Background imageSource={imageBackground}>
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View style={styles.formContainer}>
             <View style={styles.userPhotoTitleWrapper}>
-              <MainTitle text="Увійти"></MainTitle>
+              <MainTitle text="Увійти" />
             </View>
 
             <View style={styles.inputContainer}>
               <Input
                 value={email}
                 placeholder="Адреса електронної пошти"
-                onTextChange={handleEmailChange}
+                onTextChange={setEmail}
                 keyboardType="email-address"
-              ></Input>
+              />
               <View style={styles.wrapperInputPassword}>
                 <Input
                   value={password}
                   placeholder="Пароль"
-                  onTextChange={handlePasswordChange}
+                  onTextChange={setPassword}
                   secureTextEntry={!isPasswordVisible}
                   additionalElement={
                     <Button onPress={onShowButtonPress}>
@@ -81,12 +98,12 @@ export default function LoginScreen() {
             <View style={styles.buttonContainer}>
               <Button
                 outerStyles={styles.buttonRegister}
-                onPress={onRegisterPress}
+                onPress={onLoginPress}
               >
                 <Text style={styles.buttonText}>Увійти</Text>
               </Button>
               <View style={styles.textButtonWrapper}>
-                <Text style={styles.enterAskText}>Вже є акаунт?</Text>
+                <Text style={styles.enterAskText}>Немає акаунта?</Text>
                 <Button onPress={() => navigation.navigate("Registration")}>
                   <Text style={styles.buttonEnterText}>Зареєструватися</Text>
                 </Button>
@@ -94,10 +111,11 @@ export default function LoginScreen() {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </>
+      </Background>
     </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -131,25 +149,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: scale(16),
     fontFamily: "Roboto-Regular",
+    textAlign: "center",
   },
   inputContainer: {
     gap: verticalScale(16),
     marginBottom: verticalScale(43),
-  },
-  userPhoto: {
-    width: scale(120),
-    height: scale(120),
-    position: "relative",
-    marginTop: verticalScale(-90),
-  },
-  buttonAdd: {
-    position: "absolute",
-    width: scale(25),
-    height: scale(25),
-    right: verticalScale(-12),
-    bottom: scale(14),
-    borderColor: colors.icon_accent,
-    borderWidth: 1,
   },
   buttonClearText: {
     color: colors.text_link,

@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from "react-native";
-import { colors } from "../styles/colors";
-import { scale, verticalScale } from "../utils/scaling";
+import { colors } from "../../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
 import { FC } from "react";
 
 type MainTitleProps = {

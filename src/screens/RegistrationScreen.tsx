@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -6,66 +7,76 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { auth } from "../../config";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { login } from "../../store/slices/userSlice";
 import MainTitle from "../components/MainTitle";
 import Input from "../components/Input";
-import { useState } from "react";
 import Button from "../components/Button";
-import { colors } from "../styles/colors";
-import { scale, verticalScale } from "../utils/scaling";
 import Background from "../components/Background";
 import UserPhoto from "../components/Photo";
 import { AntDesign } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Navigation from "../navigation/StackNavigation";
-import { useNavigation } from "@react-navigation/native";
+import { colors } from "../../styles/colors";
+import { scale, verticalScale } from "../../utils/scaling";
 
 export default function RegistrationScreen() {
   const [email, setEmail] = useState("");
-  const [login, setLogin] = useState("");
+  const [loginName, setLoginName] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleLoginChange = (value: string) => {
-    setLogin(value);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  const onRegisterPress = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      try {
+        await updateProfile(user, { displayName: loginName });
+        console.log("Профіль оновлено успішно");
+      } catch (error) {
+        console.error("Помилка оновлення профілю:", error.message);
+      }
+
+      dispatch(
+        login({
+          uid: user.uid,
+          displayName: loginName,
+          email: user.email,
+        })
+      );
+
+      navigation.navigate("Main");
+
+      setEmail("");
+      setLoginName("");
+      setPassword("");
+    } catch (error) {
+      console.error("Помилка реєстрації:", error.message);
+      Alert.alert("Помилка реєстрації", error.message);
+    }
   };
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-  };
-
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-  };
-
-  const onRegisterPress = () => {
-    console.log(
-      "Логін:",
-      login,
-      "Електронна адреса:",
-      email,
-      "Пароль:",
-      password
-    );
-    setEmail("");
-    setLogin("");
-    setPassword("");
-  };
-
-  const onAddButtonPress = () => {};
   const onShowButtonPress = () => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
-  const imageBackground = require("../assets/images/background.png");
-  const imageAvatar = require("../assets/images/profile-photo.jpg");
-
-  const navigation = useNavigation();
+  const imageBackground = require("../../assets/images/background.png");
+  const imageAvatar = require("../../assets/images/profile-photo.jpg");
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <>
-        <Background imageSource={imageBackground}></Background>
+      <Background imageSource={imageBackground}>
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -77,33 +88,30 @@ export default function RegistrationScreen() {
                 showAddButton={true}
                 outerStyles={styles.userPhoto}
               >
-                <Button
-                  outerStyles={styles.buttonClose}
-                  onPress={onAddButtonPress}
-                >
+                <Button outerStyles={styles.buttonClose}>
                   <AntDesign name="close" size={13} color={colors.icon_main} />
                 </Button>
               </UserPhoto>
-              <MainTitle text="Реєстрація"></MainTitle>
+              <MainTitle text="Реєстрація" />
             </View>
             <View style={styles.inputContainer}>
               <Input
-                value={login}
+                value={loginName}
                 autofocus={true}
                 placeholder="Логін"
-                onTextChange={handleLoginChange}
-              ></Input>
+                onTextChange={setLoginName}
+              />
               <Input
                 value={email}
                 placeholder="Адреса електронної пошти"
-                onTextChange={handleEmailChange}
+                onTextChange={setEmail}
                 keyboardType="email-address"
-              ></Input>
+              />
               <View style={styles.wrapperInputPassword}>
                 <Input
                   value={password}
                   placeholder="Пароль"
-                  onTextChange={handlePasswordChange}
+                  onTextChange={setPassword}
                   secureTextEntry={!isPasswordVisible}
                   additionalElement={
                     <Button onPress={onShowButtonPress}>
@@ -129,10 +137,11 @@ export default function RegistrationScreen() {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </>
+      </Background>
     </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -166,6 +175,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: scale(16),
     fontFamily: "Roboto-Regular",
+    textAlign: "center",
   },
   inputContainer: {
     gap: verticalScale(16),

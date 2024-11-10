@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Camera, CameraView, useCameraPermissions } from "expo-camera";
-import CameraIcon from "../assets/images/icons/CameraIcon";
-import { colors } from "../styles/colors";
+import CameraIcon from "../../assets/images/icons/CameraIcon";
+import { colors } from "../../styles/colors";
 
 export default function CameraUse({ onPhotoTaken }) {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -19,7 +19,6 @@ export default function CameraUse({ onPhotoTaken }) {
   const takePhoto = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      console.log("photo", photo);
       if (onPhotoTaken) onPhotoTaken(photo);
     }
   };

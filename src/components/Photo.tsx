@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   ViewProps,
 } from "react-native";
-import { scale } from "../utils/scaling";
+import { scale } from "../../utils/scaling";
 import { AntDesign } from "@expo/vector-icons";
-import { colors } from "../styles/colors";
+import { colors } from "../../styles/colors";
 
 type UserPhotoProps = {
   outerStyles?: ViewProps["style"];
